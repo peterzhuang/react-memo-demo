@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 
 import "./styles.css";
 
-function Movie({ title, releaseDate, memo }) {
+function Movie({ title, releaseDate, memo, toggle }) {
   console.log(`${memo ? "<MemoizedMovie>" : "<Movie>"} rendered`);
   return (
     <div>
@@ -13,10 +13,15 @@ function Movie({ title, releaseDate, memo }) {
   );
 }
 
-const MemoizedMovie = React.memo(Movie);
+function moviePropsAreEqual(prevMovie, nextMovie) {
+  return prevMovie.title === nextMovie.title
+    && prevMovie.releaseDate === nextMovie.releaseDate;
+}
+
+const MemoizedMovie = React.memo(Movie, moviePropsAreEqual);
 
 function App() {
-  const [, setToggle] = useState(true);
+  const [toggle, setToggle] = useState(true);
   useEffect(() => {
     const id = setInterval(() => {
       setToggle(toggle => !toggle);
@@ -25,8 +30,8 @@ function App() {
   }, []);
   return (
     <>
-      <MemoizedMovie title="Heat" releaseDate="December 15, 1995" memo={true} />
-      <Movie title="Heat" releaseDate="December 15, 1995" memo={false} />
+      <MemoizedMovie title="Heat" releaseDate="December 15, 1995" memo={true} toggle={toggle}/>
+      <Movie title="Heat" releaseDate="December 15, 1995" memo={false} toggle={toggle}/>
     </>
   );
 }
